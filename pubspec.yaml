@@ -1,5 +1,5 @@
 name: tdiwef_logging
-version: 1.1.0
+version: 1.0.0
 
 description: >-
   Fork from package logging-1.0.2. Changed logging levels to tfiwer style
