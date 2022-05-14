@@ -6,7 +6,7 @@ library logging_test;
 
 import 'dart:async';
 
-import 'package:tdiwef_logging/logging.dart';
+import 'package:tdiwef_logging/tdiwef_logging.dart';
 import 'package:test/test.dart';
 
 void main() {

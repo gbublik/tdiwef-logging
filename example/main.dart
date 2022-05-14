@@ -1,4 +1,4 @@
-import 'package:tdiwef_logging/logging.dart';
+import 'package:tdiwef_logging/tdiwef_logging.dart';
 
 final log = Logger('ExampleLogger');
 
