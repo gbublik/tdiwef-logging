@@ -1,8 +1,7 @@
-[![Build Status](https://github.com/dart-lang/logging/workflows/Dart%20CI/badge.svg)](https://github.com/dart-lang/logging/actions?query=workflow%3A"Dart+CI"+branch%3Amaster)
-[![Pub](https://img.shields.io/pub/v/logging.svg)](https://pub.dev/packages/logging)
-
+## Fork 
+This is a fork of the package https://pub.dev/packages/logging.  
+Redesigned logging level to TDIWEF style - trace, debug, info, warn, error, fatal
 ## Initializing
-
 By default, the logging package does not do anything useful with the log
 messages. You must configure the logging level and add a handler for the log
 messages.
@@ -20,14 +19,12 @@ First, set the root `Level`. All messages at or above the current level are sent
 `onRecord` stream. Available levels are:
 
 + `Level.OFF`
-+ `Level.SHOUT`
-+ `Level.SEVERE`
++ `Level.FATAL`
++ `Level.ERROR`
 + `Level.WARNING`
 + `Level.INFO`
-+ `Level.CONFIG`
-+ `Level.FINE`
-+ `Level.FINER`
-+ `Level.FINEST`
++ `Level.DEBUG`
++ `Level.TRACE`
 
 Then, listen on the `onRecord` stream for `LogRecord` events. The `LogRecord`
 class has various properties for the message, error, logger name, and more.
@@ -45,25 +42,23 @@ Here is an example of logging a debug message and an error:
 
 ```dart
 var future = doSomethingAsync().then((result) {
-  log.fine('Got the result: $result');
+  log.debug('Got the result: $result');
   processResult(result);
-}).catchError((e, stackTrace) => log.severe('Oh noes!', e, stackTrace));
+}).catchError((e, stackTrace) => log.error('Oh noes!', e, stackTrace));
 ```
 
 When logging more complex messages, you can pass a closure instead that will be
 evaluated only if the message is actually logged:
 
 ```dart
-log.fine(() => [1, 2, 3, 4, 5].map((e) => e * 4).join("-"));
+log.trace(() => [1, 2, 3, 4, 5].map((e) => e * 4).join("-"));
 ```
 
 Available logging methods are:
 
-+ `log.shout(logged_content);`
-+ `log.severe(logged_content);`
-+ `log.warning(logged_content);`
-+ `log.info(logged_content);`
-+ `log.config(logged_content);`
-+ `log.fine(logged_content);`
-+ `log.finer(logged_content);`
-+ `log.finest(logged_content);`
++ `log.fatal(logged_content);` or `log.f(logged_content);`
++ `log.error(logged_content);` or `log.e(logged_content);`
++ `log.warn(logged_content);`  or `log.w(logged_content);`
++ `log.info(logged_content);`  or `log.i(logged_content);`
++ `log.denug(logged_content);` or `log.d(logged_content);`
++ `log.trace(logged_content);` or `log.t(logged_content);`

@@ -211,33 +211,27 @@ class Logger {
     }
   }
 
-  /// Log message at level [Level.FINEST].
+  /// Log message at level [Level.TRACE].
   ///
   /// See [log] for information on how non-String [message] arguments are
   /// handled.
-  void finest(Object? message, [Object? error, StackTrace? stackTrace]) =>
-      log(Level.FINEST, message, error, stackTrace);
+  void trace(Object? message, [Object? error, StackTrace? stackTrace]) =>
+      log(Level.TRACE, message, error, stackTrace);
 
-  /// Log message at level [Level.FINER].
-  ///
-  /// See [log] for information on how non-String [message] arguments are
-  /// handled.
-  void finer(Object? message, [Object? error, StackTrace? stackTrace]) =>
-      log(Level.FINER, message, error, stackTrace);
+  /// Short method trace
+  void t(Object? message, [Object? error, StackTrace? stackTrace]) =>
+      trace(message, error, stackTrace);
 
-  /// Log message at level [Level.FINE].
+  /// Log message at level [Level.DEBUG].
   ///
   /// See [log] for information on how non-String [message] arguments are
   /// handled.
-  void fine(Object? message, [Object? error, StackTrace? stackTrace]) =>
-      log(Level.FINE, message, error, stackTrace);
+  void debug(Object? message, [Object? error, StackTrace? stackTrace]) =>
+      log(Level.DEBUG, message, error, stackTrace);
 
-  /// Log message at level [Level.CONFIG].
-  ///
-  /// See [log] for information on how non-String [message] arguments are
-  /// handled.
-  void config(Object? message, [Object? error, StackTrace? stackTrace]) =>
-      log(Level.CONFIG, message, error, stackTrace);
+  /// Short method debug
+  void d(Object? message, [Object? error, StackTrace? stackTrace]) =>
+      debug(message, error, stackTrace);
 
   /// Log message at level [Level.INFO].
   ///
@@ -246,26 +240,42 @@ class Logger {
   void info(Object? message, [Object? error, StackTrace? stackTrace]) =>
       log(Level.INFO, message, error, stackTrace);
 
+  /// Short method debug
+  void i(Object? message, [Object? error, StackTrace? stackTrace]) =>
+      info(message, error, stackTrace);
+
   /// Log message at level [Level.WARNING].
   ///
   /// See [log] for information on how non-String [message] arguments are
   /// handled.
-  void warning(Object? message, [Object? error, StackTrace? stackTrace]) =>
+  void warn(Object? message, [Object? error, StackTrace? stackTrace]) =>
       log(Level.WARNING, message, error, stackTrace);
 
-  /// Log message at level [Level.SEVERE].
-  ///
-  /// See [log] for information on how non-String [message] arguments are
-  /// handled.
-  void severe(Object? message, [Object? error, StackTrace? stackTrace]) =>
-      log(Level.SEVERE, message, error, stackTrace);
+  /// Short method warn
+  void w(Object? message, [Object? error, StackTrace? stackTrace]) =>
+      warn(message, error, stackTrace);
 
-  /// Log message at level [Level.SHOUT].
+  /// Log message at level [Level.ERROR].
   ///
   /// See [log] for information on how non-String [message] arguments are
   /// handled.
-  void shout(Object? message, [Object? error, StackTrace? stackTrace]) =>
-      log(Level.SHOUT, message, error, stackTrace);
+  void error(Object? message, [Object? error, StackTrace? stackTrace]) =>
+      log(Level.ERROR, message, error, stackTrace);
+
+  /// Short method error
+  void e(Object? message, [Object? error, StackTrace? stackTrace]) =>
+      this.error(message, error, stackTrace);
+
+  /// Log message at level [Level.FATAL].
+  ///
+  /// See [log] for information on how non-String [message] arguments are
+  /// handled.
+  void fatal(Object? message, [Object? error, StackTrace? stackTrace]) =>
+      log(Level.FATAL, message, error, stackTrace);
+
+  /// Short method error
+  void f(Object? message, [Object? error, StackTrace? stackTrace]) =>
+      fatal(message, error, stackTrace);
 
   Stream<LogRecord> _getStream() {
     if (hierarchicalLoggingEnabled || parent == null) {

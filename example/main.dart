@@ -1,4 +1,4 @@
-import 'package:logging/logging.dart';
+import 'package:tdiwef_logging/logging.dart';
 
 final log = Logger('ExampleLogger');
 
@@ -20,7 +20,7 @@ void main() {
 
   print('Fibonacci(4) is: ${fibonacci(4)}');
 
-  Logger.root.level = Level.SEVERE; // skip logs less then severe.
+  Logger.root.level = Level.ERROR; // skip logs less then severe.
   print('Fibonacci(5) is: ${fibonacci(5)}');
 
   print('Fibonacci(-42) is: ${fibonacci(-42)}');
@@ -28,7 +28,7 @@ void main() {
 
 int fibonacci(int n) {
   if (n <= 2) {
-    if (n < 0) log.shout('Unexpected negative n: $n');
+    if (n < 0) log.fatal('Unexpected negative n: $n');
     return 1;
   } else {
     log.info('recursion: n = $n');

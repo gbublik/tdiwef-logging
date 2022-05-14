@@ -6,7 +6,7 @@ library logging_test;
 
 import 'dart:async';
 
-import 'package:logging/logging.dart';
+import 'package:tdiwef_logging/logging.dart';
 import 'package:test/test.dart';
 
 void main() {
@@ -44,15 +44,13 @@ void main() {
   test('levels are comparable', () {
     final unsorted = [
       Level.INFO,
-      Level.CONFIG,
-      Level.FINE,
-      Level.SHOUT,
+      Level.DEBUG,
+      Level.TRACE,
+      Level.FATAL,
       Level.OFF,
-      Level.FINER,
       Level.ALL,
       Level.WARNING,
-      Level.FINEST,
-      Level.SEVERE,
+      Level.ERROR,
     ];
 
     final sorted = Level.LEVELS;
@@ -66,9 +64,9 @@ void main() {
   test('levels are hashable', () {
     var map = <Level, String>{};
     map[Level.INFO] = 'info';
-    map[Level.SHOUT] = 'shout';
+    map[Level.FATAL] = 'fatal';
     expect(map[Level.INFO], same('info'));
-    expect(map[Level.SHOUT], same('shout'));
+    expect(map[Level.FATAL], same('fatal'));
   });
 
   test('logger name cannot start with a "." ', () {
@@ -141,18 +139,18 @@ void main() {
     try {
       throw UnsupportedError('test exception');
     } catch (error, stack) {
-      Logger.root.log(Level.SEVERE, 'severe', error, stack);
-      Logger.root.warning('warning', error, stack);
+      Logger.root.log(Level.ERROR, 'error', error, stack);
+      Logger.root.warn('warning', error, stack);
     }
 
-    Logger.root.log(Level.SHOUT, 'shout');
+    Logger.root.log(Level.FATAL, 'fatal');
 
     sub.cancel();
 
     expect(records, hasLength(3));
 
     var severe = records[0];
-    expect(severe.message, 'severe');
+    expect(severe.message, 'error');
     expect(severe.error is UnsupportedError, isTrue);
     expect(severe.stackTrace is StackTrace, isTrue);
 
@@ -162,7 +160,7 @@ void main() {
     expect(warning.stackTrace is StackTrace, isTrue);
 
     var shout = records[2];
-    expect(shout.message, 'shout');
+    expect(shout.message, 'fatal');
     expect(shout.error, isNull);
     expect(shout.stackTrace, isNull);
   });
@@ -313,7 +311,7 @@ void main() {
     });
 
     test('cannot set level if hierarchy is disabled', () {
-      expect(() => a.level = Level.FINE, throwsUnsupportedError);
+      expect(() => a.level = Level.TRACE, throwsUnsupportedError);
     });
 
     test('cannot set the level to null on the root logger', () {
@@ -329,11 +327,11 @@ void main() {
       expect(a.level, equals(Level.INFO));
       expect(b.level, equals(Level.INFO));
 
-      root.level = Level.SHOUT;
+      root.level = Level.FATAL;
 
-      expect(root.level, equals(Level.SHOUT));
-      expect(a.level, equals(Level.SHOUT));
-      expect(b.level, equals(Level.SHOUT));
+      expect(root.level, equals(Level.FATAL));
+      expect(a.level, equals(Level.FATAL));
+      expect(b.level, equals(Level.FATAL));
     });
 
     test('loggers effective level - with hierarchy', () {
@@ -343,18 +341,18 @@ void main() {
       expect(b.level, equals(Level.INFO));
       expect(c.level, equals(Level.INFO));
 
-      root.level = Level.SHOUT;
-      b.level = Level.FINE;
+      root.level = Level.FATAL;
+      b.level = Level.TRACE;
 
-      expect(root.level, equals(Level.SHOUT));
-      expect(a.level, equals(Level.SHOUT));
-      expect(b.level, equals(Level.FINE));
-      expect(c.level, equals(Level.FINE));
+      expect(root.level, equals(Level.FATAL));
+      expect(a.level, equals(Level.FATAL));
+      expect(b.level, equals(Level.TRACE));
+      expect(c.level, equals(Level.TRACE));
     });
 
     test('loggers effective level - with changing hierarchy', () {
       hierarchicalLoggingEnabled = true;
-      d.level = Level.SHOUT;
+      d.level = Level.FATAL;
       hierarchicalLoggingEnabled = false;
 
       expect(root.level, Level.INFO);
@@ -364,16 +362,15 @@ void main() {
 
     test('isLoggable is appropriate', () {
       hierarchicalLoggingEnabled = true;
-      root.level = Level.SEVERE;
+      root.level = Level.ERROR;
       c.level = Level.ALL;
       e.level = Level.OFF;
 
-      expect(root.isLoggable(Level.SHOUT), isTrue);
-      expect(root.isLoggable(Level.SEVERE), isTrue);
+      expect(root.isLoggable(Level.FATAL), isTrue);
+      expect(root.isLoggable(Level.ERROR), isTrue);
       expect(root.isLoggable(Level.WARNING), isFalse);
-      expect(c.isLoggable(Level.FINEST), isTrue);
-      expect(c.isLoggable(Level.FINE), isTrue);
-      expect(e.isLoggable(Level.SHOUT), isFalse);
+      expect(c.isLoggable(Level.TRACE), isTrue);
+      expect(e.isLoggable(Level.FATAL), isFalse);
     });
 
     test('add/remove handlers - no hierarchy', () {
@@ -410,27 +407,22 @@ void main() {
       root.onRecord.listen((record) {
         rootMessages.add('${record.level}: ${record.message}');
       });
-
-      root.finest('1');
-      root.finer('2');
-      root.fine('3');
-      root.config('4');
-      root.info('5');
-      root.warning('6');
-      root.severe('7');
-      root.shout('8');
+      root.trace('1');
+      root.debug('2');
+      root.info('3');
+      root.warn('4');
+      root.error('5');
+      root.fatal('6');
 
       expect(
           rootMessages,
           equals([
-            'FINEST: 1',
-            'FINER: 2',
-            'FINE: 3',
-            'CONFIG: 4',
-            'INFO: 5',
-            'WARNING: 6',
-            'SEVERE: 7',
-            'SHOUT: 8'
+            'TRACE: 1',
+            'DEBUG: 2',
+            'INFO: 3',
+            'WARNING: 4',
+            'ERROR: 5',
+            'FATAL: 6'
           ]));
     });
 
@@ -441,42 +433,34 @@ void main() {
         rootMessages.add('${r.level}: ${r.message} ${r.error}');
       });
 
-      root.finest('1');
-      root.finer('2');
-      root.fine('3');
-      root.config('4');
-      root.info('5');
-      root.warning('6');
-      root.severe('7');
-      root.shout('8');
-      root.finest('1', 'a');
-      root.finer('2', 'b');
-      root.fine('3', ['c']);
-      root.config('4', 'd');
-      root.info('5', 'e');
-      root.warning('6', 'f');
-      root.severe('7', 'g');
-      root.shout('8', 'h');
+      root.trace('1');
+      root.debug('2');
+      root.info('3');
+      root.warn('4');
+      root.error('5');
+      root.fatal('6');
+      root.trace('1', ['a']);
+      root.debug('2', 'b');
+      root.info('3', 'c');
+      root.warn('4', 'd');
+      root.error('5', 'e');
+      root.fatal('6', 'f');
 
       expect(
           rootMessages,
           equals([
-            'FINEST: 1 null',
-            'FINER: 2 null',
-            'FINE: 3 null',
-            'CONFIG: 4 null',
-            'INFO: 5 null',
-            'WARNING: 6 null',
-            'SEVERE: 7 null',
-            'SHOUT: 8 null',
-            'FINEST: 1 a',
-            'FINER: 2 b',
-            'FINE: 3 [c]',
-            'CONFIG: 4 d',
-            'INFO: 5 e',
-            'WARNING: 6 f',
-            'SEVERE: 7 g',
-            'SHOUT: 8 h'
+            'TRACE: 1 null',
+            'DEBUG: 2 null',
+            'INFO: 3 null',
+            'WARNING: 4 null',
+            'ERROR: 5 null',
+            'FATAL: 6 null',
+            'TRACE: 1 [a]',
+            'DEBUG: 2 b',
+            'INFO: 3 c',
+            'WARNING: 4 d',
+            'ERROR: 5 e',
+            'FATAL: 6 f'
           ]));
     });
 
@@ -496,31 +480,26 @@ void main() {
       });
 
       root.info('1');
-      root.fine('2');
-      root.shout('3');
+      root.trace('2');
+      root.fatal('3');
 
       b.info('4');
-      b.severe('5');
-      b.warning('6');
-      b.fine('7');
+      b.error('5');
+      b.warn('6');
+      b.trace('7');
 
-      c.fine('8');
-      c.warning('9');
-      c.shout('10');
+      c.trace('8');
+      c.warn('9');
+      c.fatal('10');
 
       expect(
           rootMessages,
           equals([
-            // 'INFO: 1' is not loggable
-            // 'FINE: 2' is not loggable
-            'SHOUT: 3',
-            // 'INFO: 4' is not loggable
-            'SEVERE: 5',
+            'FATAL: 3',
+            'ERROR: 5',
             'WARNING: 6',
-            // 'FINE: 7' is not loggable
-            // 'FINE: 8' is not loggable
             'WARNING: 9',
-            'SHOUT: 10'
+            'FATAL: 10'
           ]));
 
       // no hierarchy means we all hear the same thing.
@@ -547,53 +526,43 @@ void main() {
       });
 
       root.info('1');
-      root.fine('2');
-      root.shout('3');
+      root.trace('2');
+      root.fatal('3');
 
       b.info('4');
-      b.severe('5');
-      b.warning('6');
-      b.fine('7');
+      b.error('5');
+      b.warn('6');
+      b.trace('7');
 
-      c.fine('8');
-      c.warning('9');
-      c.shout('10');
+      c.trace('8');
+      c.warn('9');
+      c.fatal('10');
 
       expect(
           rootMessages,
           equals([
             'INFO: 1',
-            // 'FINE: 2' is not loggable
-            'SHOUT: 3',
-            // 'INFO: 4' is not loggable
-            'SEVERE: 5',
+            'FATAL: 3',
+            'ERROR: 5',
             'WARNING: 6',
-            // 'FINE: 7' is not loggable
-            // 'FINE: 8' is not loggable
             'WARNING: 9',
-            'SHOUT: 10'
+            'FATAL: 10'
           ]));
 
       expect(
           aMessages,
           equals([
-            // 1,2 and 3 are lower in the hierarchy
-            // 'INFO: 4' is not loggable
-            'SEVERE: 5',
+            'ERROR: 5',
             'WARNING: 6',
-            // 'FINE: 7' is not loggable
-            // 'FINE: 8' is not loggable
             'WARNING: 9',
-            'SHOUT: 10'
+            'FATAL: 10'
           ]));
 
       expect(
           cMessages,
           equals([
-            // 1 - 7 are lower in the hierarchy
-            // 'FINE: 8' is not loggable
             'WARNING: 9',
-            'SHOUT: 10'
+            'FATAL: 10'
           ]));
     });
 
@@ -608,8 +577,7 @@ void main() {
       String myClosure() => '${++callCount}';
 
       root.info(myClosure);
-      root.finer(myClosure); // Should not get evaluated.
-      root.warning(myClosure);
+      root.warn(myClosure);
 
       expect(
           messages,
@@ -665,8 +633,8 @@ void main() {
     test('no stack trace by default', () {
       var records = <LogRecord>[];
       root.onRecord.listen(records.add);
-      root.severe('hello');
-      root.warning('hello');
+      root.error('hello');
+      root.warn('hello');
       root.info('hello');
       expect(records, hasLength(3));
       expect(records[0].stackTrace, isNull);
@@ -678,8 +646,8 @@ void main() {
       var records = <LogRecord>[];
       recordStackTraceAtLevel = Level.WARNING;
       root.onRecord.listen(records.add);
-      root.severe('hello');
-      root.warning('hello');
+      root.error('hello');
+      root.warn('hello');
       root.info('hello');
       expect(records, hasLength(3));
       expect(records[0].stackTrace, isNotNull);
@@ -692,8 +660,8 @@ void main() {
       var records = <LogRecord>[];
       recordStackTraceAtLevel = Level.WARNING;
       root.onRecord.listen(records.add);
-      root.severe('hello');
-      root.warning('hello', 'a', trace);
+      root.error('hello');
+      root.warn('hello', 'a', trace);
       expect(records, hasLength(2));
       expect(records[0].stackTrace, isNot(equals(trace)));
       expect(records[1].stackTrace, trace);
@@ -703,8 +671,8 @@ void main() {
       var records = <LogRecord>[];
       recordStackTraceAtLevel = Level.WARNING;
       root.onRecord.listen(records.add);
-      root.severe('hello');
-      root.warning('hello');
+      root.error('hello');
+      root.warn('hello');
       root.info('hello');
       expect(records, hasLength(3));
       expect(records[0].error, isNotNull);

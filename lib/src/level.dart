@@ -7,9 +7,8 @@
 /// [Level]s to control logging output. Logging can be enabled to include all
 /// levels above certain [Level]. [Level]s are ordered using an integer
 /// value [Level.value]. The predefined [Level] constants below are sorted as
-/// follows (in descending order): [Level.SHOUT], [Level.SEVERE],
-/// [Level.WARNING], [Level.INFO], [Level.CONFIG], [Level.FINE], [Level.FINER],
-/// [Level.FINEST], and [Level.ALL].
+/// follows (in descending order): [Level.FATAL], [Level.ERROR],
+/// [Level.WARNING], [Level.INFO], [Level.DEBUG], [Level.TRACE], and [Level.ALL].
 ///
 /// We recommend using one of the predefined logging levels. If you define your
 /// own level, make sure you use a value between those used in [Level.ALL] and
@@ -29,40 +28,32 @@ class Level implements Comparable<Level> {
   /// Special key to turn off all logging ([value] = 2000).
   static const Level OFF = Level('OFF', 2000);
 
-  /// Key for highly detailed tracing ([value] = 300).
-  static const Level FINEST = Level('FINEST', 300);
+  /// Key for tracing information ([value] = 300).
+  static const Level TRACE = Level('TRACE', 300);
 
-  /// Key for fairly detailed tracing ([value] = 400).
-  static const Level FINER = Level('FINER', 400);
+  /// Key for debug messages ([value] = 400).
+  static const Level DEBUG = Level('DEBUG', 400);
 
-  /// Key for tracing information ([value] = 500).
-  static const Level FINE = Level('FINE', 500);
+  /// Key for informational messages ([value] = 500).
+  static const Level INFO = Level('INFO', 500);
 
-  /// Key for static configuration messages ([value] = 700).
-  static const Level CONFIG = Level('CONFIG', 700);
+  /// Key for potential problems ([value] = 600).
+  static const Level WARNING = Level('WARNING', 600);
 
-  /// Key for informational messages ([value] = 800).
-  static const Level INFO = Level('INFO', 800);
+  /// Key for serious failures ([value] = 700).
+  static const Level ERROR = Level('ERROR', 700);
 
-  /// Key for potential problems ([value] = 900).
-  static const Level WARNING = Level('WARNING', 900);
-
-  /// Key for serious failures ([value] = 1000).
-  static const Level SEVERE = Level('SEVERE', 1000);
-
-  /// Key for extra debugging loudness ([value] = 1200).
-  static const Level SHOUT = Level('SHOUT', 1200);
+  /// Key for extra debugging loudness ([value] = 800).
+  static const Level FATAL = Level('FATAL', 800);
 
   static const List<Level> LEVELS = [
     ALL,
-    FINEST,
-    FINER,
-    FINE,
-    CONFIG,
+    TRACE,
+    DEBUG,
     INFO,
     WARNING,
-    SEVERE,
-    SHOUT,
+    ERROR,
+    FATAL,
     OFF
   ];
 
